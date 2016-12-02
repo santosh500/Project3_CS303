@@ -5,10 +5,10 @@
 
 using namespace std;
 int main()
-{
-	MorseCode obj;
-	string in, str;
-
+{	
+	MorseCode obj;	
+	obj.build_encode_tree();
+	obj.buildDecodingTree();
 	
-
-}
+	
+}
