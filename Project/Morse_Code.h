@@ -9,13 +9,13 @@ class MorseCode
 {
 
 public:
-	
+	void build_tree(); //build the map tree for encode
+	void encode(string input); //taking string input and cout the morse code tranlated from letters
+
 
 private:
-
+	map<char, string> encode_map;
 	
-
-
 
 
 };
