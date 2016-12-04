@@ -1,26 +1,27 @@
+#pragma once
 
 #ifndef HUFFMAN
 #define HUFFMAN
 #include <string>
 #include <map>
+#include "BinaryTree.h"
 using namespace std;
-
-
 class MorseCode
 {
 
 public:
 	MorseCode();
 	
-	void buildDecodingTree();	
+	void build_decode_tree();	
 	void decode(string str);
 	void build_encode_tree();
 	void encode(string input);
+	void displayBinaryTreeDecode();
 
 private:
 	
 	map<char, string> encode_map;
-
+	BinaryTree* decode_tree;
 	class BinNode
 	{
 	public:
@@ -47,4 +48,4 @@ inline MorseCode::MorseCode()
 	root = new BinNode('*');
 }
 
-#endif
+#endif

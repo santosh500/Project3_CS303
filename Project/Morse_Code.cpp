@@ -1,12 +1,19 @@
 #include <string>
-#include <iostream>
+#include <cstring>
+#include <sstream>
 #include <iomanip>
+#include<iostream>
+#include<fstream>
+#include<vector>
 #include "Morse_Code.h"
+#include "BinaryTree.h"
 
 using namespace std;
-void MorseCode::build_encode_tree()
+
+
+
+void MorseCode::build_encode_tree() // map for encoding
 {
-	//for encode from map, need a tree for decode
 	encode_map['a'] = ".-";
 	encode_map['b'] = "-...";
 	encode_map['c'] = "-.-.";
@@ -36,75 +43,74 @@ void MorseCode::build_encode_tree()
 
 }
 
-void MorseCode:: encode(string input)
+void MorseCode::encode(string input) //print out all the result for encoding
 {
 	string result;
 	for (int i = 1; i <= input.size(); i++)
 		result += encode_map[input[i - 1]] + ' ';
-	cout << result <<" ";
+	cout << result << " ";
 }
 
-void MorseCode::buildDecodingTree()
+void MorseCode::build_decode_tree()
 {
-	char ch;
-	string code;
-	for (map<char, string> ::iterator it = encode_map.begin(); it != encode_map.end(); it++) {
-		ch = it->first;
-		code = it->second;
-		MorseCode::BinNodePointer p = root;
-		for (int i = 0; i < code.length(); i++)
-		{
+	decode_tree = new BinaryTree();
 
-			switch (code[i])
+	string line;
+	ifstream myReadFile("MorseCodeInput.txt");
+	int found, i = 0;
+	if (myReadFile.is_open())
+	{
+		while (getline(myReadFile, line))
+		{
+			istringstream ss(line);
+			string token;
+			vector<string> mainVec;
+			while (getline(ss, token, ','))
 			{
-			case '.':
-				if (p->left == NULL)
-					p->left = new MorseCode::BinNode('*');
-				p = p->left;
-				break;
-			case '-':
-				if (p->right == NULL)
-					p->right = new MorseCode::BinNode('*');
-				p = p->right;
-				break;
-			default:
-				cerr << "*** Wrong character in code sourc file ***\n";
-				exit(1);
+
+				mainVec.push_back(token);
 			}
+			if (!mainVec.empty())
+			{
+				string k = mainVec[0];
+				const char* l = k.c_str();
+				Node* newNode = new Node();
+				newNode->setNode(l[0], mainVec[1]);
+				decode_tree->addNode(decode_tree->getTreeRoot(), newNode);
+			}
+
 		}
-		
-		p->data = ch;
+		myReadFile.close();
+
+	}
+}
+
+void MorseCode::displayBinaryTreeDecode()
+{
+	if (decode_tree != nullptr)
+	{
+		decode_tree->displayTree(decode_tree->getTreeRoot());
 	}
 }
 
 
 void MorseCode::decode(string str)
 {
-	char oneBit;
-	MorseCode::BinNodePointer p;
-	int count = 0;
-	while (count < str.size())
-	{
-		p = root;
-		while (p->left != NULL || p->right != NULL)
-		{
-			if (count == str.size()) { break; }
-			oneBit = str[count];
-			if (oneBit == '.')
-			{
-				p = p->left;
-				count++;
-			}
+	vector<string> testString;
+	stringstream ss(str);
+	string partString;
 
-			else if (oneBit == '-')
-			{
-				p = p->right;
-				count++;
-			}
-			else
-				cerr << "Wrong Morse Code input: " << oneBit << "\n";
-		}
-		cout << p->data;
+	while (getline(ss, partString, ' '))
+	{
+		testString.push_back(partString);
 	}
-	return;
+
+	for (int i = 0; i < testString.size(); i++)
+	{
+		SearchString* newSS = new SearchString();
+		newSS->setCode(testString[i]);
+		decode_tree->searchTree(decode_tree->getTreeRoot(), newSS);
+		cout << newSS->getValue();
+	}
+	
 }
